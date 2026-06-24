@@ -5,7 +5,7 @@ import PyPDF2
 import io,re
 
 app = FastAPI()
-client_gemini = genai.Client(api_key="AIzaSyDe9uubF89OYjrrZ3KZObiQfbv2sWN8W_0")
+client_gemini = genai.Client(api_key="API_KEY")
 db_client = chromadb.PersistentClient(path="./vector_db")
 collection = db_client.get_or_create_collection(name="pdf_knowledge_base")
 
