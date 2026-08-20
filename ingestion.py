@@ -24,15 +24,11 @@ def create_chunk_obj(chunk_id, text,indexStart,pageCount):
         }
     }
 def embedding(text):
-    try:
-        result = client_gemini.models.embed_content(
-            model="models/gemini-embedding-001", 
-            contents=text
-        )
-        vector = result.embeddings[0].values
-    except Exception as e:
-        print(f"Eroare: {e}")
-    return vector
+    result = client_gemini.models.embed_content(
+        model="models/gemini-embedding-001",
+        contents=text
+    )
+    return result.embeddings[0].values
 
 @app.get("/")
 def home():
@@ -112,8 +108,23 @@ async def ask_question(question: str):
 
     # 3. Extragem textele găsite
     relevant_chunks = results['documents'][0]
-    
+
+    # 4. Construim promptul și generăm răspunsul folosind contextul găsit
+    context = "\n\n".join(relevant_chunks)
+    prompt = (
+        "Răspunde la întrebare folosind DOAR informațiile din contextul de mai jos. "
+        "Dacă răspunsul nu se găsește în context, spune că nu ai suficiente informații.\n\n"
+        f"Context:\n{context}\n\n"
+        f"Întrebare: {question}"
+    )
+
+    response = client_gemini.models.generate_content(
+        model="models/gemini-2.5-flash",
+        contents=prompt
+    )
+
     return {
         "question": question,
-        "relevant_context": relevant_chunks
+        "answer": response.text,
+        "sources": relevant_chunks
     }
