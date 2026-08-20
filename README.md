@@ -40,9 +40,9 @@ Build the foundational basis of Retrieval-Augmented Generation (RAG) algorithms.
 
 4. **Set up API credentials**
    - Obtain a Google Gemini API key from [Google AI Studio](https://ai.google.dev/)
-   - Update the `API_KEY` in `ingestion.py`:
-     ```python
-     client_gemini = genai.Client(api_key="YOUR_API_KEY_HERE")
+   - Create a `.env` file in the project root with:
+     ```
+     GEMINI_API_KEY=YOUR_API_KEY_HERE
      ```
 
 ## Usage
@@ -50,7 +50,7 @@ Build the foundational basis of Retrieval-Augmented Generation (RAG) algorithms.
 ### Start the server
 
 ```bash
-uvicorn ingestion:app --reload
+uvicorn main:app --reload
 ```
 
 Server runs at `http://localhost:8000`
@@ -113,14 +113,18 @@ Response:
 
 ```
 RAG-core/
-├── ingestion.py           # Main application: PDF processing, embedding, Q&A
+├── main.py                # FastAPI app + endpoints (/test-pdf, /ask)
+├── ingestion.py           # PDF reading + chunking
+├── embedding.py           # Gemini embedding calls
+├── retrieval.py           # ChromaDB storage + query
+├── generation.py          # LLM step that writes the answer
 ├── requirements.txt       # Python dependencies
-├── embedding.py          # (Placeholder for embedding utilities)
-├── vector_db/            # ChromaDB persistent storage
-│   ├── chroma.sqlite3    # Vector database file
-│   └── [collection-id]/  # Collection metadata
-├── venv/                 # Virtual environment
-└── README.md            # This file
+├── tests/                 # Automated test suite (pytest)
+├── vector_db/             # ChromaDB persistent storage
+│   ├── chroma.sqlite3     # Vector database file
+│   └── [collection-id]/   # Collection metadata
+├── venv/                  # Virtual environment
+└── README.md              # This file
 ```
 
 ## Notes
