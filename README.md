@@ -1,13 +1,13 @@
-# RAG-core
+# RAG
 
-Build the foundational basis of Retrieval-Augmented Generation (RAG) algorithms.
+A complete Retrieval-Augmented Generation (RAG) pipeline: ingest PDFs, embed and store them, then retrieve and generate grounded answers to questions.
 
 ## Key Features
 
 - **PDF Document Ingestion**: Upload and process PDF files with intelligent text chunking
 - **Semantic Embeddings**: Convert text to high-dimensional vectors using Google's Gemini embedding model
 - **Vector Storage**: Persist embeddings in ChromaDB for fast similarity search
-- **Question-Answering**: Query the knowledge base to retrieve relevant document chunks
+- **Retrieval-Augmented Generation**: Retrieve relevant chunks and generate grounded answers with Gemini
 - **REST API**: FastAPI-based endpoints for all RAG operations
 
 ## Tech Stack
@@ -23,8 +23,8 @@ Build the foundational basis of Retrieval-Augmented Generation (RAG) algorithms.
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/ioan-ung/RAG-core.git
-   cd RAG-core
+   git clone https://github.com/ioan-ung/RAG.git
+   cd RAG
    ```
 
 2. **Create a virtual environment**
@@ -93,7 +93,8 @@ Response:
 ```json
 {
   "question": "What is the main topic?",
-  "relevant_context": [
+  "answer": "Generated answer grounded in the retrieved context...",
+  "sources": [
     "chunk 1 text...",
     "chunk 2 text...",
     "chunk 3 text..."
@@ -106,20 +107,19 @@ Response:
 1. **Ingestion**: PDF files are parsed page-by-page, text is cleaned, and split into overlapping chunks
 2. **Embedding**: Each chunk is converted to a 3072-dimensional vector using Gemini embeddings
 3. **Storage**: Vectors and metadata are stored in ChromaDB with persistent SQLite backend
-4. **Retrieval**: User queries are embedded and compared against stored vectors using cosine similarity
-5. **Response**: Top 3 most relevant chunks are returned as context
+4. **Retrieval**: User queries are embedded and compared against stored vectors using cosine similarity, returning the top 3 most relevant chunks
+5. **Augmentation**: The retrieved chunks are inserted into a prompt as grounding context
+6. **Generation**: `gemini-2.5-flash` generates an answer constrained to that context
 
 ## Project Structure
 
 ```
-RAG-core/
-├── ingestion.py           # Main application: PDF processing, embedding, Q&A
+RAG/
+├── ingestion.py           # Main application: PDF processing, embedding, retrieval, generation
 ├── requirements.txt       # Python dependencies
 ├── embedding.py          # (Placeholder for embedding utilities)
-├── vector_db/            # ChromaDB persistent storage
-│   ├── chroma.sqlite3    # Vector database file
-│   └── [collection-id]/  # Collection metadata
-├── venv/                 # Virtual environment
+├── vector_db/            # ChromaDB persistent storage (gitignored, generated locally)
+├── venv/                 # Virtual environment (gitignored, generated locally)
 └── README.md            # This file
 ```
 
